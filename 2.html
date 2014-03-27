@@ -1,3 +1,32 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<head>
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script src="http://d3js.org/queue.v1.min.js"></script>
+  <script src="http://d3js.org/topojson.v1.min.js"></script>
+</head>
+<style>
+  .counties {
+    fill: none;
+  }
+
+  .states {
+    fill: none;
+    stroke: #fff;
+    stroke-linejoin: round;
+  }
+
+  /* Shades of Orange */
+  .q0-5 { fill:#FAEBCD; }
+  .q1-5 { fill:#FCB938; }
+  .q2-5 { fill:#FCB52D; }
+  .q3-5 { fill:#F5AB1D; }
+  .q4-5 { fill:#F2A511; }
+
+</style>
+<body>
+<script>
 // do all of this on window load
 window.onload = function() {
   var width = 960,
@@ -8,10 +37,10 @@ window.onload = function() {
 
   // given a value x in the input domain, returns the corresponding value in the output range.
   var quantize = d3.scale.quantize()
-      // set the domain from -1 to 1 for the incoming data
-      .domain([-1,1])
+      // set the domain for the incoming data
+      .domain([0,5])
       // convert the data into a scaled range from 0-8, mapping to the class-name in the CSS
-      .range(d3.range(9).map(function(i) { return "q" + i + "-9"; }));
+      .range(d3.range(5).map(function(i) { return "q" + i + "-5"; }));
 
   // stores the code for drawing each state
   var path = d3.geo.path();
@@ -50,16 +79,16 @@ window.onload = function() {
         .attr("data-value", function(d) {
           var current_local = rateById.get(d.id);
           if (current_local) {
-            return current_local.score;
+            return current_local.cb;
           }
         })
         // add attr class, this determines the color per the css
-        // quanitze takes the value and turns it into a 1-9 value for color
+        // quanitze takes the value and turns it into a 1-8 value for color
         // loop to make sure it doesn't crash when it tries to get an empty id
         .attr("class", function(d) {
           var current_local = rateById.get(d.id);
           if (current_local) {
-            return quantize(current_local.score);
+            return quantize(current_local.cb);
           }
         })
         .attr("d", path);
@@ -73,3 +102,6 @@ window.onload = function() {
 
 
 
+</script>
+</body>
+</html>

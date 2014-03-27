@@ -1,3 +1,41 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<head>
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script src="http://d3js.org/queue.v1.min.js"></script>
+  <script src="http://d3js.org/topojson.v1.min.js"></script>
+</head>
+<style>
+  .counties {
+    fill: none;
+  }
+
+  .states {
+    fill: none;
+    stroke: #fff;
+    stroke-linejoin: round;
+  }
+
+  /* Shades of Green */
+  .q0-5 { fill:#DAEBE1; }
+  .q1-5 { fill:#31E074; }
+  .q2-5 { fill:#1FCF62; }
+  .q3-5 { fill:#12B852; }
+  .q4-5 { fill:#06A142; }
+
+  rect.legend {
+    opacity: .3;
+  }
+
+  text.legend {
+    font-family: Arial;
+    font-size: 8pt;
+  }
+
+</style>
+<body>
+<script>
 // do all of this on window load
 window.onload = function() {
   var width = 960,
@@ -8,10 +46,10 @@ window.onload = function() {
 
   // given a value x in the input domain, returns the corresponding value in the output range.
   var quantize = d3.scale.quantize()
-      // set the domain from -1 to 1 for the incoming data
-      .domain([-1,1])
+      // set the domain for the incoming data
+      .domain([0,5])
       // convert the data into a scaled range from 0-8, mapping to the class-name in the CSS
-      .range(d3.range(9).map(function(i) { return "q" + i + "-9"; }));
+      .range(d3.range(5).map(function(i) { return "q" + i + "-5"; }));
 
   // stores the code for drawing each state
   var path = d3.geo.path();
@@ -33,7 +71,48 @@ window.onload = function() {
 
   // once all the aysnchronous actions are done, ready() fires off the action
   // 1st param is for error, 2nd param is how we send in the shapes to draw the map
+
   function ready(error, us) {
+    var legend = svg.append('g');
+    legend.append("rect")
+      .attr("class","legend")
+      .attr("height","90px")
+      .attr("width","110px")
+      .attr("rx","10px")
+      .attr("ry","10px")
+      .attr("fill","grey");
+    legend_text_1 = legend.append("text")
+      .attr("class","legend")
+      .text("County")
+      .attr("fill","black")
+      .attr("y", 15)
+      .attr("x", 4);
+    legend_text_2 = legend.append("text")
+      .attr("class","legend")
+      .text("State")
+      .attr("fill","black")
+      .attr("y", 30)
+      .attr("x", 4);
+    legend_text_3 = legend.append("text")
+      .attr("class","legend")
+      .text("Score")
+      .attr("fill","black")
+      .attr("y", 45)
+      .attr("x", 4);
+    legend_text_4 = legend.append("text")
+      .attr("class","legend")
+      .text("Cracker Barrels: ")
+      .attr("fill","black")
+      .attr("y", 60)
+      .attr("x", 4);
+    legend_text_5 = legend.append("text")
+      .attr("class","legend")
+      .text("Whole Foods")
+      .attr("fill","black")
+      .attr("y", 75)
+      .attr("x", 4);
+
+
     // appends one g to the SVG, class counties
     svg.append("g")
       .attr("class", "counties")
@@ -50,26 +129,37 @@ window.onload = function() {
         .attr("data-value", function(d) {
           var current_local = rateById.get(d.id);
           if (current_local) {
-            return current_local.score;
+            return current_local.wf;
           }
         })
         // add attr class, this determines the color per the css
-        // quanitze takes the value and turns it into a 1-9 value for color
+        // quanitze takes the value and turns it into a 1-8 value for color
         // loop to make sure it doesn't crash when it tries to get an empty id
         .attr("class", function(d) {
           var current_local = rateById.get(d.id);
           if (current_local) {
-            return quantize(current_local.score);
+            return quantize(current_local.wf);
           }
         })
-        .attr("d", path);
+        .attr("d", path)
+        .on("mouseover", function(d) {
+          console.log(rateById.get(d.id));
+          legend_text_1.text(rateById.get(d.id).county);
+          legend_text_2.text(rateById.get(d.id).state);
+          legend_text_3.text(rateById.get(d.id).wf);
+          legend_text_4.text(rateById.get(d.id).cb);
+          legend_text_5.text(rateById.get(d.id).score);
+        });
 
     svg.append("path")
         .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
         .attr("class", "states")
         .attr("d", path);
+
   }
+
 };
 
-
-
+</script>
+</body>
+</html>

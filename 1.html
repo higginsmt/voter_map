@@ -1,3 +1,40 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<head>
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script src="http://d3js.org/queue.v1.min.js"></script>
+  <script src="http://d3js.org/topojson.v1.min.js"></script>
+</head>
+<style>
+  .counties {
+    fill: none;
+  }
+
+  .states {
+    fill: none;
+    stroke: #fff;
+    stroke-linejoin: round;
+  }
+
+  /* Shades of Red */
+  .q0-9 { fill:rgb(224,24,10); }
+  .q1-9 { fill:rgb(220,60,60); }
+  .q2-9 { fill:rgb(218,76,62); }
+  .q3-9 { fill:rgb(198,109,128); }
+
+  /* Neutral */
+  .q4-9 { fill:'grey'; }
+
+  /* Shades of Blue */
+  .q5-9 { fill:rgb(66,146,198); }
+  .q6-9 { fill:rgb(33,113,181); }
+  .q7-9 { fill:rgb(8,81,156); }
+  .q8-9 { fill:rgb(8,48,107); }
+
+</style>
+<body>
+<script>
 // do all of this on window load
 window.onload = function() {
   var width = 960,
@@ -73,3 +110,6 @@ window.onload = function() {
 
 
 
+</script>
+</body>
+</html>

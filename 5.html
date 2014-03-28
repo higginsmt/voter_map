@@ -17,21 +17,30 @@
     stroke-linejoin: round;
   }
 
-  /* Shades of Green */
-  .q0-5 { fill:#DAEBE1; }
-  .q1-5 { fill:#31E074; }
-  .q2-5 { fill:#1FCF62; }
-  .q3-5 { fill:#12B852; }
-  .q4-5 { fill:#06A142; }
+  /* Shades of Red */
+  .q0-9 { fill:rgb(224,24,10); }
+  .q1-9 { fill:rgb(220,60,60); }
+  .q2-9 { fill:rgb(218,76,62); }
+  .q3-9 { fill:rgb(198,109,128); }
+
+  /* Neutral */
+  .q4-9 { fill:'grey'; }
+
+  /* Shades of Blue */
+  .q5-9 { fill:rgb(66,146,198); }
+  .q6-9 { fill:rgb(33,113,181); }
+  .q7-9 { fill:rgb(8,81,156); }
+  .q8-9 { fill:rgb(8,48,107); }
 
   rect.legend {
-    opacity: .8;
+    opacity: .9;
   }
 
   text.legend {
     font-family: Arial;
     font-size: 8pt;
   }
+
 
 </style>
 <body>
@@ -46,10 +55,10 @@ window.onload = function() {
 
   // given a value x in the input domain, returns the corresponding value in the output range.
   var quantize = d3.scale.quantize()
-      // set the domain for the incoming data
-      .domain([0,5])
+      // set the domain from -1 to 1 for the incoming data
+      .domain([-1,1])
       // convert the data into a scaled range from 0-8, mapping to the class-name in the CSS
-      .range(d3.range(5).map(function(i) { return "q" + i + "-5"; }));
+      .range(d3.range(9).map(function(i) { return "q" + i + "-9"; }));
 
   // stores the code for drawing each state
   var path = d3.geo.path();
@@ -71,8 +80,7 @@ window.onload = function() {
 
   // once all the aysnchronous actions are done, ready() fires off the action
   // 1st param is for error, 2nd param is how we send in the shapes to draw the map
-
-    function ready(error, us) {
+  function ready(error, us) {
     // appends one g to the SVG, class counties
     svg.append("g")
       .attr("class", "counties")
@@ -89,7 +97,7 @@ window.onload = function() {
         .attr("data-value", function(d) {
           var current_local = rateById.get(d.id);
           if (current_local) {
-            return current_local.wf;
+            return current_local.score;
           }
         })
         // add attr class, this determines the color per the css
@@ -98,7 +106,7 @@ window.onload = function() {
         .attr("class", function(d) {
           var current_local = rateById.get(d.id);
           if (current_local) {
-            return quantize(current_local.wf);
+            return quantize(current_local.score);
           }
         })
         .attr("d", path)
@@ -159,7 +167,7 @@ window.onload = function() {
               .attr("class","legend")
               .text("# Cracker Barrels")
               .attr("fill","black")
-              .attr("x", x+105)
+              .attr("x", x+100)
               .attr("y", y-15);
 
             legend_text_4 = legend.append("text")
@@ -192,6 +200,8 @@ window.onload = function() {
   }
 
 };
+
+
 
 </script>
 </body>

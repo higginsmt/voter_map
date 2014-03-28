@@ -32,6 +32,16 @@
   .q7-9 { fill:rgb(8,81,156); }
   .q8-9 { fill:rgb(8,48,107); }
 
+  rect.legend {
+    opacity: .9;
+  }
+
+  text.legend {
+    font-family: Arial;
+    font-size: 8pt;
+  }
+
+
 </style>
 <body>
 <script>
@@ -91,7 +101,7 @@ window.onload = function() {
           }
         })
         // add attr class, this determines the color per the css
-        // quanitze takes the value and turns it into a 1-9 value for color
+        // quanitze takes the value and turns it into a 1-8 value for color
         // loop to make sure it doesn't crash when it tries to get an empty id
         .attr("class", function(d) {
           var current_local = rateById.get(d.id);
@@ -99,13 +109,96 @@ window.onload = function() {
             return quantize(current_local.score);
           }
         })
-        .attr("d", path);
+        .attr("d", path)
+        .on("mouseover", function(d) {
+          //console.log(d3.mouse(this)[0] + " " + d3.mouse(this)[1] );
+          //console.log(rateById.get(d.id));
+          var x = d3.mouse(this)[0];
+          var y = d3.mouse(this)[1];
+          var legend = svg.append('g');
+            legend.append("rect")
+              .attr("x",x+15)
+              .attr("y",y-50)
+              .attr("class","legend")
+              .attr("height","65px")
+              .attr("width","120px")
+              .style("stroke-width","1")
+              .style("stroke","black")
+              .attr("rx","10px")
+              .attr("ry","10px")
+              .attr("fill","grey");
+
+            legend_text_fixed_cb = legend.append("text")
+              .attr("class","legend")
+              .text("Cracker Barrels: ")
+              .attr("fill","black")
+              .attr("x", x+20)
+              .attr("y", y-15);
+
+            legend_text_fixed_wf = legend.append("text")
+              .attr("class","legend")
+              .text("Whole Foods: ")
+              .attr("fill","black")
+              .attr("x", x+20)
+              .attr("y", y-5);
+
+           legend_text_fixed_pol = legend.append("text")
+              .attr("class","legend")
+              .text("Politics: ")
+              .attr("fill","black")
+              .attr("x", x+20)
+              .attr("y", y+5);
+
+            legend_text_1 = legend.append("text")
+              .attr("class","legend")
+              .text("County")
+              .attr("fill","black")
+              .attr("x", x+20)
+              .attr("y", y-35);
+
+            legend_text_2 = legend.append("text")
+              .attr("class","legend")
+              .text("State")
+              .attr("fill","black")
+              .attr("x", x+20)
+              .attr("y", y-25);
+
+            legend_text_3 = legend.append("text")
+              .attr("class","legend")
+              .text("# Cracker Barrels")
+              .attr("fill","black")
+              .attr("x", x+105)
+              .attr("y", y-15);
+
+            legend_text_4 = legend.append("text")
+              .attr("class","legend")
+              .text("# Whole Foods")
+              .attr("fill","black")
+              .attr("x", x+90)
+              .attr("y", y-5);
+
+            legend_text_5 = legend.append("text")
+              .attr("class","legend")
+              .text("Politics")
+              .attr("fill","black")
+              .attr("x", x+60)
+              .attr("y", y+5);
+
+            legend_text_1.text(rateById.get(d.id).county);
+            legend_text_2.text(rateById.get(d.id).state);
+            legend_text_3.text(rateById.get(d.id).cb);
+            legend_text_4.text(rateById.get(d.id).wf);
+            legend_text_5.text(rateById.get(d.id).score);
+        })
+        .on("mouseout", function() { svg.selectAll(".legend").remove(); });
 
     svg.append("path")
         .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
         .attr("class", "states")
         .attr("d", path);
+
   }
+
 };
 
 
